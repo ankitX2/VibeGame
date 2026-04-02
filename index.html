@@ -225,22 +225,7 @@ function showResult(their){
 }
 
 // load result directly if link has result param
-(function(){
- const params=new URLSearchParams(window.location.search);
- const result=params.get("result");
- if(result){
-   try{
-     const decoded=decodeData(decodeURIComponent(result));
-     app.innerHTML=`
-       <div class="big">${decoded.percent}%</div>
-       <h3>Compatibility Result 😄</h3>
-       <button onclick="renderStart()">Play Yourself</button>
-     `;
-   }catch(e){
-     renderStart();
-   }
- }
-})();
+
  let percent=Math.round((match/their.length)*100);
 
  let msg= percent>80?"Perfect Match 🔥":percent>60?"Good Match 🙂":percent>40?"Hmm Interesting 🤔":"Opposites 👀";
