@@ -1,18 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Compatibility Game Link</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compatibility Game</title>
+
 <style>
-body{margin:0;font-family:Arial;background:linear-gradient(135deg,#0f172a,#020617);color:#fff;display:flex;justify-content:center;align-items:center;height:100vh}
-.card{background:#111827;padding:20px;border-radius:20px;width:360px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.5)}
-button{padding:12px;border:none;border-radius:10px;margin:6px;cursor:pointer;font-size:16px}
-input{width:90%;padding:10px;margin:6px;border-radius:10px;border:none}
-.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
-.big{font-size:26px;font-weight:bold}
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg,#0f172a,#020617);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.card {
+  background: #111827;
+  padding: 20px;
+  border-radius: 20px;
+  width: 360px;
+  text-align: center;
+}
+button {
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  margin: 5px;
+  cursor: pointer;
+}
+.opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.big {
+  font-size: 28px;
+  font-weight: bold;
+}
+input {
+  width: 90%;
+  padding: 8px;
+  border-radius: 10px;
+  border: none;
+}
 </style>
 </head>
+
 <body>
 
 <div class="card">
@@ -20,224 +55,164 @@ input{width:90%;padding:10px;margin:6px;border-radius:10px;border:none}
 </div>
 
 <script>
-const questions=[
- {q:"Your ideal date?",opts:["🍕 Netflix","✈️ Trip","🍷 Fancy dinner","🎮 Gaming","🌄 Long drive"]},
- {q:"Biggest red flag?",opts:["Lies 😶","Late reply ⏳","Too many ex 😅","No ambition 🚫","No respect 😤"]},
- {q:"Weekend vibe?",opts:["Sleep 😴","Party 🎉","Travel ✈️","Family 🏡","Gym 💪"]},
- {q:"Food mood?",opts:["Healthy 🥗","Street 🍔","Home 🏡","Anything 😄","Dessert 🍰"]},
- {q:"Love language?",opts:["Talk 💬","Care ❤️","Gifts 🎁","Time ⏰","Physical touch 🤝"]},
- {q:"Fight style?",opts:["Silent 🤐","Talk it out 💬","Ignore 😅","Win argument 😎","Apologize fast 🙏"]},
- {q:"Morning routine?",opts:["Workout 💪","Sleep more 😴","Phone scroll 📱","Meditation 🧘","Rush to work 🏃"]},
- {q:"Travel style?",opts:["Luxury 🏨","Budget 💸","Backpacking 🎒","Road trips 🚗","Stay home 😄"]},
- {q:"Spending habit?",opts:["Save all 💰","Spend freely 💸","Balanced ⚖️","Invest 📈","Impulse buy 😅"]},
- {q:"Social life?",opts:["Few close friends 🤍","Big group 🎉","Family first 🏡","Online friends 💻","Solo 🧍"]},
- {q:"Movie choice?",opts:["Romance ❤️","Action 🔥","Comedy 😂","Thriller 😱","Documentary 🎥"]},
- {q:"Communication style?",opts:["Direct 💬","Emotional ❤️","Logical 🧠","Avoid conflict 😅","Sarcastic 😏"]},
- {q:"Fitness level?",opts:["Daily workout 💪","Sometimes 😄","Rarely 😅","Sports 🏏","No interest 😴"]},
- {q:"Future goal?",opts:["Career growth 💼","Family 🏡","Travel world ✈️","Wealth 💰","Peaceful life 🌿"]},
- {q:"Handling stress?",opts:["Talk it out 💬","Sleep 😴","Eat 🍕","Workout 💪","Ignore 😅"]}
+const questions = [
+ {q:"Your ideal date?",opts:["Netflix","Trip","Dinner","Gaming","Drive"]},
+ {q:"Biggest red flag?",opts:["Lies","Late reply","Too many ex","No ambition","No respect"]},
+ {q:"Weekend vibe?",opts:["Sleep","Party","Travel","Family","Gym"]},
+ {q:"Food mood?",opts:["Healthy","Street","Home","Anything","Dessert"]},
+ {q:"Love language?",opts:["Talk","Care","Gifts","Time","Touch"]},
+ {q:"Fight style?",opts:["Silent","Talk it out","Ignore","Win","Apologize"]},
+ {q:"Morning routine?",opts:["Workout","Sleep","Phone","Meditation","Rush"]},
+ {q:"Travel style?",opts:["Luxury","Budget","Backpacking","Road trips","Stay home"]},
+ {q:"Spending habit?",opts:["Save","Spend","Balanced","Invest","Impulse"]},
+ {q:"Social life?",opts:["Close friends","Big group","Family","Online","Solo"]},
+ {q:"Movie choice?",opts:["Romance","Action","Comedy","Thriller","Docs"]},
+ {q:"Communication?",opts:["Direct","Emotional","Logical","Avoid","Sarcastic"]},
+ {q:"Fitness?",opts:["Daily","Sometimes","Rarely","Sports","No interest"]},
+ {q:"Future goal?",opts:["Career","Family","Travel","Wealth","Peace"]},
+ {q:"Stress handling?",opts:["Talk","Sleep","Eat","Workout","Ignore"]}
 ];
 
-let myAnswers=[];
-let index=0;
+let index = 0;
+let myAnswers = [];
 
-const app=document.getElementById("app");
+const app = document.getElementById("app");
 
-// FIX: Robust UTF-8 Base64 using TextEncoder/TextDecoder
-function encodeData(data){
- const json = JSON.stringify(data);
- const bytes = new TextEncoder().encode(json);
- let binary = '';
- bytes.forEach(b => binary += String.fromCharCode(b));
- return btoa(binary);
+// encoding (safe)
+function encode(data){
+  return btoa(encodeURIComponent(JSON.stringify(data)));
+}
+function decode(data){
+  return JSON.parse(decodeURIComponent(atob(data)));
 }
 
-function decodeData(data){
- const binary = atob(data);
- const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
- const json = new TextDecoder().decode(bytes);
- return JSON.parse(json);
+function start(){
+  index = 0;
+  myAnswers = [];
+  showQ();
 }
 
-function renderStart(){
- app.innerHTML=`
-  <h2>Compatibility Game 😄</h2>
-  <p>Play first → then share link</p>
-  <button onclick="startPlay()">Start</button>
- `;
-}
-
-function startPlay(){
- index=0; myAnswers=[];
- showQ();
+function showStart(){
+  app.innerHTML = `
+    <h2>Compatibility Game 😄</h2>
+    <p>Play first → then share link</p>
+    <button onclick="start()">Start</button>
+  `;
 }
 
 function showQ(){
- if(index>=questions.length){
-   generateLink();
-   return;
- }
- let q=questions[index];
- app.innerHTML=`
-  <h3>${q.q}</h3>
-  <div class="opts">
-   ${q.opts.map((o,i)=>`<button onclick="choose(${i})">${o}</button>`).join("")}
-  </div>
- `;
+  if(index >= questions.length){
+    generateLink();
+    return;
+  }
+
+  let q = questions[index];
+  app.innerHTML = `
+    <h3>${q.q}</h3>
+    <div class="opts">
+      ${q.opts.map((o,i)=>`<button onclick="choose(${i})">${o}</button>`).join("")}
+    </div>
+  `;
 }
 
 function choose(i){
- if(index>=questions.length) return;
- myAnswers.push(questions[index].opts[i]);
- index++;
- showQ();
+  myAnswers.push(questions[index].opts[i]);
+  index++;
+  showQ();
 }
 
 function generateLink(){
- let data=encodeData(myAnswers);
- let link = location.origin + location.pathname + "?data=" + encodeURIComponent(data);
+  let data = encode(myAnswers);
+  let link = location.origin + location.pathname + "?data=" + encodeURIComponent(data);
 
- app.innerHTML=`
-  <h3>Share this link 😎</h3>
-  <input value="${link}" readonly />
-  <button onclick="copyLink()">Copy</button>
- `;
+  app.innerHTML = `
+    <h3>Share this link 😎</h3>
+    <input value="${link}" readonly />
+    <button onclick="copy('${link}')">Copy</button>
+  `;
 }
 
-function copyLink(){
-  const input = document.querySelector("input");
-  const text = input.value;
+function copy(text){
+  navigator.clipboard.writeText(text);
+  alert("Copied! Send on WhatsApp 👍");
+}
 
-  // Try modern clipboard API
-  if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text)
-      .then(()=> alert("Link copied! Send on WhatsApp 👍"))
-      .catch(()=> fallbackCopy(text));
-  } else {
-    fallbackCopy(text);
+function load(){
+  let params = new URLSearchParams(location.search);
+
+  let result = params.get("result");
+  if(result){
+    let data = decode(decodeURIComponent(result));
+    app.innerHTML = `
+      <div class="big">${data.percent}%</div>
+      <h3>Compatibility 😄</h3>
+      <button onclick="showStart()">Play</button>
+    `;
+    return;
   }
-}
 
-function fallbackCopy(text){
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  document.body.appendChild(temp);
-  temp.select();
-  temp.setSelectionRange(0, 99999);
-  try {
-    document.execCommand("copy");
-    alert("Link copied! Send on WhatsApp 👍");
-  } catch (err) {
-    alert("Copy failed. Please copy manually.");
+  let data = params.get("data");
+  if(!data){
+    showStart();
+    return;
   }
-  document.body.removeChild(temp);
+
+  let their = decode(decodeURIComponent(data));
+  index = 0;
+  myAnswers = [];
+  compareQ(their);
 }
 
-function loadCompare(){
- let params=new URLSearchParams(window.location.search);
+function compareQ(their){
+  if(index >= questions.length){
+    result(their);
+    return;
+  }
 
- // PRIORITY: result link
- let result=params.get("result");
- if(result){
-   try{
-     const decoded=decodeData(decodeURIComponent(result));
-     app.innerHTML=`
-       <div class="big">${decoded.percent}%</div>
-       <h3>Compatibility Result 😄</h3>
-       <button onclick="renderStart()">Play Yourself</button>
-     `;
-     return;
-   }catch(e){
-     // fallback to normal flow
-   }
- }
-
- let data=params.get("data");
- if(!data) return renderStart();
-
- try{
-   data = decodeURIComponent(data);
- }catch(e){}
-
- let theirAnswers;
- try{
-   theirAnswers=decodeData(data);
- }catch(e){
-   alert("Invalid or corrupted link");
-   return renderStart();
- }
-
- index=0; myAnswers=[];
- showCompareQ(theirAnswers);
-}catch(e){
-   alert("Invalid or corrupted link");
-   return renderStart();
- }
-
- index=0; myAnswers=[];
- showCompareQ(theirAnswers);
-}
-
-function showCompareQ(their){
- if(index>=questions.length){
-   showResult(their);
-   return;
- }
- let q=questions[index];
- app.innerHTML=`
-  <h3>${q.q}</h3>
-  <p>(Answer honestly 😄)</p>
-  <div class="opts">
-   ${q.opts.map((o,i)=>`<button onclick="compareChoose(${i})">${o}</button>`).join("")}
-  </div>
- `;
- window.their=their;
+  let q = questions[index];
+  app.innerHTML = `
+    <h3>${q.q}</h3>
+    <div class="opts">
+      ${q.opts.map((o,i)=>`<button onclick="compareChoose(${i})">${o}</button>`).join("")}
+    </div>
+  `;
+  window.their = their;
 }
 
 function compareChoose(i){
- if(index>=questions.length) return;
- myAnswers.push(questions[index].opts[i]);
- index++;
- showCompareQ(window.their);
+  myAnswers.push(questions[index].opts[i]);
+  index++;
+  compareQ(window.their);
 }
 
-function showResult(their){
- let match=0;
- for(let i=0;i<their.length;i++){
-  if(their[i]===myAnswers[i]) match++;
- }
- let percent=Math.round((match/their.length)*100);
+function result(their){
+  let match = 0;
 
- let msg= percent>80?"Perfect Match 🔥":percent>60?"Good Match 🙂":percent>40?"Hmm Interesting 🤔":"Opposites 👀";
+  for(let i=0;i<their.length;i++){
+    if(their[i] === myAnswers[i]) match++;
+  }
 
- // create shareable result link
- const resultData = encodeData({their, mine: myAnswers, percent});
- const resultLink = location.origin + location.pathname + "?result=" + encodeURIComponent(resultData);
+  let percent = Math.round((match / their.length) * 100);
 
- app.innerHTML=`
-  <div class="big">${percent}%</div>
-  <h3>${msg}</h3>
-  <p>Share your result 😄</p>
-  <input value="${resultLink}" readonly />
-  <button onclick="copyLink()">Copy Result Link</button>
-  <button onclick="renderStart()">Play Again</button>
- `;
+  let msg = percent > 80 ? "Perfect Match 🔥" :
+            percent > 60 ? "Good Match 🙂" :
+            percent > 40 ? "Interesting 🤔" :
+            "Opposites 👀";
+
+  let resultData = encode({percent});
+  let link = location.origin + location.pathname + "?result=" + encodeURIComponent(resultData);
+
+  app.innerHTML = `
+    <div class="big">${percent}%</div>
+    <h3>${msg}</h3>
+    <p>Share result 😄</p>
+    <input value="${link}" readonly />
+    <button onclick="copy('${link}')">Copy Result</button>
+    <button onclick="showStart()">Play Again</button>
+  `;
 }
 
-// load result directly if link has result param
-
- let percent=Math.round((match/their.length)*100);
-
- let msg= percent>80?"Perfect Match 🔥":percent>60?"Good Match 🙂":percent>40?"Hmm Interesting 🤔":"Opposites 👀";
-
- app.innerHTML=`
-  <div class="big">${percent}%</div>
-  <h3>${msg}</h3>
-  <button onclick="renderStart()">Play Again</button>
- `;
-}
-
-loadCompare();
+load();
 </script>
 
 </body>
