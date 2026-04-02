@@ -3,47 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Compatibility Game</title>
+<title>VibeCheck 💫</title>
 
 <style>
 body {
-  margin: 0;
-  font-family: Arial;
-  background: linear-gradient(135deg,#0f172a,#020617);
-  color: white;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#1e293b,#020617);
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
 }
+
 .card {
-  background: #111827;
-  padding: 20px;
-  border-radius: 20px;
-  width: 360px;
-  text-align: center;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(12px);
+  border-radius:20px;
+  padding:25px;
+  width:350px;
+  text-align:center;
+  box-shadow:0 10px 40px rgba(0,0,0,0.6);
 }
+
+h2,h3 { margin:10px 0; }
+
 button {
-  padding: 10px;
-  border-radius: 10px;
-  border: none;
-  margin: 5px;
-  cursor: pointer;
+  padding:10px;
+  border:none;
+  border-radius:12px;
+  margin:5px;
+  cursor:pointer;
+  font-size:14px;
+  background:#6366f1;
+  color:white;
+  transition:0.2s;
 }
+button:hover {
+  background:#4f46e5;
+  transform:scale(1.05);
+}
+
 .opts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
 }
+
 .big {
-  font-size: 28px;
-  font-weight: bold;
+  font-size:32px;
+  font-weight:bold;
 }
+
 input {
-  width: 90%;
-  padding: 8px;
-  border-radius: 10px;
-  border: none;
+  width:90%;
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  margin-top:10px;
+}
+
+.fade {
+  animation:fade 0.4s ease;
+}
+@keyframes fade {
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
 }
 </style>
 </head>
@@ -56,160 +83,168 @@ input {
 
 <script>
 const questions = [
- {q:"Your ideal date?",opts:["Netflix","Trip","Dinner","Gaming","Drive"]},
- {q:"Biggest red flag?",opts:["Lies","Late reply","Too many ex","No ambition","No respect"]},
- {q:"Weekend vibe?",opts:["Sleep","Party","Travel","Family","Gym"]},
- {q:"Food mood?",opts:["Healthy","Street","Home","Anything","Dessert"]},
- {q:"Love language?",opts:["Talk","Care","Gifts","Time","Touch"]},
- {q:"Fight style?",opts:["Silent","Talk it out","Ignore","Win","Apologize"]},
- {q:"Morning routine?",opts:["Workout","Sleep","Phone","Meditation","Rush"]},
- {q:"Travel style?",opts:["Luxury","Budget","Backpacking","Road trips","Stay home"]},
- {q:"Spending habit?",opts:["Save","Spend","Balanced","Invest","Impulse"]},
- {q:"Social life?",opts:["Close friends","Big group","Family","Online","Solo"]},
- {q:"Movie choice?",opts:["Romance","Action","Comedy","Thriller","Docs"]},
- {q:"Communication?",opts:["Direct","Emotional","Logical","Avoid","Sarcastic"]},
- {q:"Fitness?",opts:["Daily","Sometimes","Rarely","Sports","No interest"]},
- {q:"Future goal?",opts:["Career","Family","Travel","Wealth","Peace"]},
- {q:"Stress handling?",opts:["Talk","Sleep","Eat","Workout","Ignore"]}
+ {q:"Ideal hangout?",opts:["Netflix + silence 😌","Deep talk 🌙","Cancel plan 🙈","Long drive 🚗","Send memes 😂"]},
+ {q:"Texting style?",opts:["Reply late ⏳","Typing deleting 🤐","No voice notes ❌","One word 👍","Essay mode 📝"]},
+ {q:"Biggest fear?",opts:["Too much talk 😵","Calls 📞","Meeting friends 😬","No alone time 😭","Oversharing 😶"]},
+ {q:"Weekend vibe?",opts:["Alone recharge 🔋","1 person only 🧍","Gaming 🎮","Overthinking 🤯","Sleep 😴"]},
+ {q:"Show love?",opts:["Memes 😂","Remember things 🧠","Silent company 🤍","Deep talk 💬","Food 🍕"]},
+ {q:"Fight style?",opts:["Disappear 🚶","Long text 📱","Avoid 😅","Overthink 🤯","Sorry later 🙃"]},
+ {q:"Social energy?",opts:["0% 🔋","2 people max 👥","Fake extrovert 🎭","Need recovery 😴","Pets 🐶"]},
+ {q:"Date expectation?",opts:["No silence 😭","Comfort silence 😌","No crowd 🚫","Food focus 🍔","End early 😅"]},
+ {q:"Random thought?",opts:["I was weird 😵","They hate me 😭","Analyze all 🧠","Replay convos 🎬","Stay quiet 🤐"]},
+ {q:"Phone habit?",opts:["DND 🔕","Seen no reply 👀","Ghost 👻","Reply in head 🧠","Night active 🌙"]},
+ {q:"Travel style?",opts:["Hotel 🛏️","No crowds 🚫","Quiet pics 📸","Solo explore 🚶","Cancel 😅"]},
+ {q:"Crush behavior?",opts:["Never confess 🙃","Secret stare 👀","Act normal fail 😭","Overthink 🤯","Fake scenarios 📝"]},
+ {q:"Stress relief?",opts:["Music 🎧","Sleep 😴","Overthink 😅","Scroll 📱","Talk 1 person 🧍"]},
+ {q:"Communication?",opts:["Slow real 💬","Awkward honest 😅","Avoid 🙈","Deep only 🌌","Sarcastic 😏"]},
+ {q:"Relationship goal?",opts:["Peace 🌿","Comfort 😌","Best friend 🤍","No pressure 😅","Stay weird 🤪"]}
 ];
 
-let index = 0;
-let myAnswers = [];
+let index=0;
+let myAnswers=[];
+const app=document.getElementById("app");
 
-const app = document.getElementById("app");
-
-// encoding (safe)
 function encode(data){
-  return btoa(encodeURIComponent(JSON.stringify(data)));
+ return btoa(encodeURIComponent(JSON.stringify(data)));
 }
 function decode(data){
-  return JSON.parse(decodeURIComponent(atob(data)));
-}
-
-function start(){
-  index = 0;
-  myAnswers = [];
-  showQ();
+ return JSON.parse(decodeURIComponent(atob(data)));
 }
 
 function showStart(){
-  app.innerHTML = `
-    <h2>Compatibility Game 😄</h2>
-    <p>Play first → then share link</p>
-    <button onclick="start()">Start</button>
-  `;
+ app.innerHTML=`
+  <div class="fade">
+  <h2>VibeCheck 💫</h2>
+  <p>Play & share with your person 😄</p>
+  <button onclick="start()">Start</button>
+  </div>
+ `;
+}
+
+function start(){
+ index=0;
+ myAnswers=[];
+ showQ();
 }
 
 function showQ(){
-  if(index >= questions.length){
-    generateLink();
-    return;
-  }
-
-  let q = questions[index];
-  app.innerHTML = `
-    <h3>${q.q}</h3>
-    <div class="opts">
-      ${q.opts.map((o,i)=>`<button onclick="choose(${i})">${o}</button>`).join("")}
-    </div>
-  `;
+ if(index>=questions.length){
+  generateLink();
+  return;
+ }
+ let q=questions[index];
+ app.innerHTML=`
+ <div class="fade">
+  <h3>${q.q}</h3>
+  <div class="opts">
+   ${q.opts.map((o,i)=>`<button onclick="choose(${i})">${o}</button>`).join("")}
+  </div>
+ </div>
+ `;
 }
 
 function choose(i){
-  myAnswers.push(questions[index].opts[i]);
-  index++;
-  showQ();
+ myAnswers.push(questions[index].opts[i]);
+ index++;
+ showQ();
 }
 
 function generateLink(){
-  let data = encode(myAnswers);
-  let link = location.origin + location.pathname + "?data=" + encodeURIComponent(data);
+ let data=encode(myAnswers);
+ let link=location.origin+location.pathname+"?data="+encodeURIComponent(data);
 
-  app.innerHTML = `
-    <h3>Share this link 😎</h3>
-    <input value="${link}" readonly />
-    <button onclick="copy('${link}')">Copy</button>
-  `;
+ app.innerHTML=`
+ <div class="fade">
+  <h3>Send this link 😎</h3>
+  <input value="${link}" readonly>
+  <button onclick="copy('${link}')">Copy</button>
+ </div>
+ `;
 }
 
 function copy(text){
-  navigator.clipboard.writeText(text);
-  alert("Copied! Send on WhatsApp 👍");
+ navigator.clipboard.writeText(text);
+ alert("Copied! Send on WhatsApp 👍");
 }
 
 function load(){
-  let params = new URLSearchParams(location.search);
+ let params=new URLSearchParams(location.search);
 
-  let result = params.get("result");
-  if(result){
-    let data = decode(decodeURIComponent(result));
-    app.innerHTML = `
-      <div class="big">${data.percent}%</div>
-      <h3>Compatibility 😄</h3>
-      <button onclick="showStart()">Play</button>
-    `;
-    return;
-  }
+ let result=params.get("result");
+ if(result){
+  let data=decode(decodeURIComponent(result));
+  app.innerHTML=`
+  <div class="fade">
+   <div class="big">${data.percent}%</div>
+   <h3>${data.msg}</h3>
+   <button onclick="showStart()">Play</button>
+  </div>
+  `;
+  return;
+ }
 
-  let data = params.get("data");
-  if(!data){
-    showStart();
-    return;
-  }
+ let data=params.get("data");
+ if(!data){
+  showStart();
+  return;
+ }
 
-  let their = decode(decodeURIComponent(data));
-  index = 0;
-  myAnswers = [];
-  compareQ(their);
+ let their=decode(decodeURIComponent(data));
+ index=0;
+ myAnswers=[];
+ compareQ(their);
 }
 
 function compareQ(their){
-  if(index >= questions.length){
-    result(their);
-    return;
-  }
+ if(index>=questions.length){
+  showResult(their);
+  return;
+ }
 
-  let q = questions[index];
-  app.innerHTML = `
-    <h3>${q.q}</h3>
-    <div class="opts">
-      ${q.opts.map((o,i)=>`<button onclick="compareChoose(${i})">${o}</button>`).join("")}
-    </div>
-  `;
-  window.their = their;
+ let q=questions[index];
+ app.innerHTML=`
+ <div class="fade">
+  <h3>${q.q}</h3>
+  <div class="opts">
+   ${q.opts.map((o,i)=>`<button onclick="compareChoose(${i})">${o}</button>`).join("")}
+  </div>
+ </div>
+ `;
+ window.their=their;
 }
 
 function compareChoose(i){
-  myAnswers.push(questions[index].opts[i]);
-  index++;
-  compareQ(window.their);
+ myAnswers.push(questions[index].opts[i]);
+ index++;
+ compareQ(window.their);
 }
 
-function result(their){
-  let match = 0;
+function showResult(their){
+ let match=0;
+ for(let i=0;i<their.length;i++){
+  if(their[i]===myAnswers[i]) match++;
+ }
 
-  for(let i=0;i<their.length;i++){
-    if(their[i] === myAnswers[i]) match++;
-  }
+ let percent=Math.round((match/their.length)*100);
 
-  let percent = Math.round((match / their.length) * 100);
+ let msg=percent>80?"Soulmate vibes 🔥":
+         percent>60?"Strong match 🙂":
+         percent>40?"Interesting combo 🤔":
+         "Opposite energy 👀";
 
-  let msg = percent > 80 ? "Perfect Match 🔥" :
-            percent > 60 ? "Good Match 🙂" :
-            percent > 40 ? "Interesting 🤔" :
-            "Opposites 👀";
+ let resultData=encode({percent,msg});
+ let link=location.origin+location.pathname+"?result="+encodeURIComponent(resultData);
 
-  let resultData = encode({percent});
-  let link = location.origin + location.pathname + "?result=" + encodeURIComponent(resultData);
-
-  app.innerHTML = `
-    <div class="big">${percent}%</div>
-    <h3>${msg}</h3>
-    <p>Share result 😄</p>
-    <input value="${link}" readonly />
-    <button onclick="copy('${link}')">Copy Result</button>
-    <button onclick="showStart()">Play Again</button>
-  `;
+ app.innerHTML=`
+ <div class="fade">
+  <div class="big">${percent}%</div>
+  <h3>${msg}</h3>
+  <p>Share result 😄</p>
+  <input value="${link}" readonly>
+  <button onclick="copy('${link}')">Copy Result</button>
+  <button onclick="showStart()">Play Again</button>
+ </div>
+ `;
 }
 
 load();
