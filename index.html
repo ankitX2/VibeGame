@@ -183,6 +183,41 @@ function showResult(their){
 
  let msg= percent>80?"Perfect Match 🔥":percent>60?"Good Match 🙂":percent>40?"Hmm Interesting 🤔":"Opposites 👀";
 
+ // create shareable result link
+ const resultData = encodeData({their, mine: myAnswers, percent});
+ const resultLink = location.origin + location.pathname + "?result=" + encodeURIComponent(resultData);
+
+ app.innerHTML=`
+  <div class="big">${percent}%</div>
+  <h3>${msg}</h3>
+  <p>Share your result 😄</p>
+  <input value="${resultLink}" readonly />
+  <button onclick="copyLink()">Copy Result Link</button>
+  <button onclick="renderStart()">Play Again</button>
+ `;
+}
+
+// load result directly if link has result param
+(function(){
+ const params=new URLSearchParams(window.location.search);
+ const result=params.get("result");
+ if(result){
+   try{
+     const decoded=decodeData(decodeURIComponent(result));
+     app.innerHTML=`
+       <div class="big">${decoded.percent}%</div>
+       <h3>Compatibility Result 😄</h3>
+       <button onclick="renderStart()">Play Yourself</button>
+     `;
+   }catch(e){
+     renderStart();
+   }
+ }
+})();
+ let percent=Math.round((match/their.length)*100);
+
+ let msg= percent>80?"Perfect Match 🔥":percent>60?"Good Match 🙂":percent>40?"Hmm Interesting 🤔":"Opposites 👀";
+
  app.innerHTML=`
   <div class="big">${percent}%</div>
   <h3>${msg}</h3>
