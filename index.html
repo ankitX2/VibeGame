@@ -95,7 +95,7 @@ function choose(i){
 
 function generateLink(){
  let data=encodeData(myAnswers);
- let link=location.origin+location.pathname+"?data="+data;
+ let link = location.origin + location.pathname + "?data=" + encodeURIComponent(data);
 
  app.innerHTML=`
   <h3>Share this link 😎</h3>
@@ -135,7 +135,8 @@ function fallbackCopy(text){
 
 function loadCompare(){
  let params=new URLSearchParams(window.location.search);
- let data=params.get("data");
+ let data = params.get("data");
+ if(data) data = decodeURIComponent(data);
  if(!data) return renderStart();
 
  let theirAnswers;
