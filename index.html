@@ -6,71 +6,161 @@
 <title>VibeCheck 💫</title>
 
 <style>
+:root {
+  --bg-color: #0b0f19;
+  --card-bg: rgba(17, 24, 39, 0.7);
+  --accent-color: #10b981; /* Calming emerald green */
+  --accent-glow: rgba(16, 185, 129, 0.3);
+  --text-primary: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --btn-bg: #1f2937;
+  --btn-hover: #374151;
+}
+
 body {
   margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg,#1e293b,#020617);
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh;
+  font-family: 'ui-monospace', 'Cascadia Code', 'Segoe UI', sans-serif;
+  background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(99, 102, 241, 0.05) 0px, transparent 50%);
+  color: var(--text-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .card {
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(12px);
-  border-radius:20px;
-  padding:25px;
-  width:350px;
-  text-align:center;
-  box-shadow:0 10px 40px rgba(0,0,0,0.6);
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 24px;
+  padding: 30px;
+  width: 360px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-h2,h3 { margin:10px 0; }
+h2 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 5px;
+  letter-spacing: -0.5px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 15px 0 20px 0;
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
 
 button {
-  padding:10px;
-  border:none;
-  border-radius:12px;
-  margin:5px;
-  cursor:pointer;
-  font-size:14px;
-  background:#6366f1;
-  color:white;
-  transition:0.2s;
+  padding: 12px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-radius: 14px;
+  margin: 0;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  background: var(--btn-bg);
+  color: var(--text-primary);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
+
 button:hover {
-  background:#4f46e5;
-  transform:scale(1.05);
+  background: var(--btn-hover);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+button:active {
+  transform: translateY(0px);
+}
+
+/* Primary call to action buttons */
+.cta-btn {
+  background: var(--accent-color);
+  color: #062c1e;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.cta-btn:hover {
+  background: #34d399;
+  box-shadow: 0 0 20px var(--accent-glow);
 }
 
 .opts {
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:10px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+/* 5th option "Not Applicable" spans across both columns & looks softer */
+.opts button:nth-child(5) {
+  grid-column: span 2;
+  background: transparent;
+  border: 1px dashed rgba(255, 255, 255, 0.15);
+  color: var(--text-secondary);
+}
+
+.opts button:nth-child(5):hover {
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-primary);
 }
 
 .big {
-  font-size:32px;
-  font-weight:bold;
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--accent-color);
+  text-shadow: 0 0 30px var(--accent-glow);
+  margin-bottom: 10px;
 }
 
 input {
-  width:90%;
-  padding:10px;
-  border-radius:10px;
-  border:none;
-  margin-top:10px;
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.2);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 13px;
+  margin-top: 10px;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--accent-color);
 }
 
 .fade {
-  animation:fade 0.4s ease;
+  animation: fade 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 @keyframes fade {
-  from{opacity:0;transform:translateY(10px)}
-  to{opacity:1;transform:translateY(0)}
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
 </head>
@@ -83,21 +173,66 @@ input {
 
 <script>
 const questions = [
- {q:"Ideal hangout?",opts:["Netflix + silence 😌","Deep talk 🌙","Cancel plan 🙈","Long drive 🚗","Send memes 😂"]},
- {q:"Texting style?",opts:["Reply late ⏳","Typing deleting 🤐","No voice notes ❌","One word 👍","Essay mode 📝"]},
- {q:"Biggest fear?",opts:["Too much talk 😵","Calls 📞","Meeting friends 😬","No alone time 😭","Oversharing 😶"]},
- {q:"Weekend vibe?",opts:["Alone recharge 🔋","1 person only 🧍","Gaming 🎮","Overthinking 🤯","Sleep 😴"]},
- {q:"Show love?",opts:["Memes 😂","Remember things 🧠","Silent company 🤍","Deep talk 💬","Food 🍕"]},
- {q:"Fight style?",opts:["Disappear 🚶","Long text 📱","Avoid 😅","Overthink 🤯","Sorry later 🙃"]},
- {q:"Social energy?",opts:["0% 🔋","2 people max 👥","Fake extrovert 🎭","Need recovery 😴","Pets 🐶"]},
- {q:"Date expectation?",opts:["No silence 😭","Comfort silence 😌","No crowd 🚫","Food focus 🍔","End early 😅"]},
- {q:"Random thought?",opts:["I was weird 😵","They hate me 😭","Analyze all 🧠","Replay convos 🎬","Stay quiet 🤐"]},
- {q:"Phone habit?",opts:["DND 🔕","Seen no reply 👀","Ghost 👻","Reply in head 🧠","Night active 🌙"]},
- {q:"Travel style?",opts:["Hotel 🛏️","No crowds 🚫","Quiet pics 📸","Solo explore 🚶","Cancel 😅"]},
- {q:"Crush behavior?",opts:["Never confess 🙃","Secret stare 👀","Act normal fail 😭","Overthink 🤯","Fake scenarios 📝"]},
- {q:"Stress relief?",opts:["Music 🎧","Sleep 😴","Overthink 😅","Scroll 📱","Talk 1 person 🧍"]},
- {q:"Communication?",opts:["Slow real 💬","Awkward honest 😅","Avoid 🙈","Deep only 🌌","Sarcastic 😏"]},
- {q:"Relationship goal?",opts:["Peace 🌿","Comfort 😌","Best friend 🤍","No pressure 😅","Stay weird 🤪"]}
+ {
+   q: "Your social battery hits 1% at a party. You...",
+   opts: ["Silently vanish without saying goodbye 🥷", "Hide in the bathroom scrolling reels 📱", "Find the host's pet and bond with it 🐱", "Sit in a corner holding a drink awkwardly 🍹", "Not Applicable / I don't go to parties 🙅‍♂️"]
+ },
+ {
+   q: "How do you show someone you genuinely care?",
+   opts: ["I send a reel that reminded me of them 🫶", "I remember a random tiny detail they mentioned 🧠", "I offer to do a chore for them so they don't have to 🧼", "I am willing to sit in comfortable silence with them 🤫", "Not Applicable / I don't know how to show love 🤖"]
+ },
+ {
+   q: "A friend calls you out of nowhere. Your reaction?",
+   opts: ["Stare at the ringing phone until it stops 📵", "Instantly panic. Is someone dead? 😱", "Let it ring, then text 'What's up?' 💬", "Answer with 'Everything okay?' immediately 🚨", "Not Applicable / My phone is permanently on DND 🔕"]
+ },
+ {
+   q: "Perfect weekend itinerary?",
+   opts: ["Complete isolation to recharge 🔋", "Hanging out with exactly ONE person 👩‍❤️‍👨", "Binge-watching a show I've seen 5 times 📺", "Deep diving into a random internet rabbit hole 🕳️", "Not Applicable / I actually like crowds (weird) 👥"]
+ },
+ {
+   q: "What is your ultimate love language?",
+   opts: ["Canceling plans so we can stay home together 🛋️", "Bringing me my favorite snack without asking 🍕", "Listening to my highly specific hyperfixations 🎧", "Defending me so I don't have to speak up 🛡️", "Not Applicable / I am an unlovable rock 🪨"]
+ },
+ {
+   q: "Your favorite type of conversation?",
+   opts: ["Existential dread and the universe at 2 AM 🌌", "A highly detailed debate about a fictional universe 🧙‍♂️", "Comfortable, wordless silence 🧘‍♂️", "Exchanging purely unhinged memes 💀", "Not Applicable / I prefer small talk about the weather ☀️"]
+ },
+ {
+   q: "Someone knocks on your door unannounced. You...",
+   opts: ["Freeze completely and pretend no one is home 🛑", "Look through the peephole with pure terror 👀", "Assume it's the police or a hitman 🕵️‍♂️", "Slowly army-crawl away from the windows 🪖", "Not Applicable / I live in a fortress 🏰"]
+ },
+ {
+   q: "Your biggest fear in a relationship?",
+   opts: ["Them wanting to go out every single night 🎉", "Having to meet a massive group of their friends 😵", "Running out of things to talk about 😶", "Them not understanding my need for space 🌌", "Not Applicable / I have zero fears, I'm fearless 🦁"]
+ },
+ {
+   q: "How do you handle conflict or arguments?",
+   opts: ["I shut down and need a few hours to process 🧠", "I write a massive, carefully edited essay 📝", "I apologize immediately just to end the interaction 🏳️", "I ghost them until the vibe feels safe again 👻", "Not Applicable / I simply never fight 😇"]
+ },
+ {
+   q: "You see someone you know at the grocery store. You...",
+   opts: ["Pivot immediately into the next aisle 🛒", "Pretend to be incredibly fascinated by a soup can 🥫", "Put your hoodie up and walk faster 🏃‍♂️", "Just leave the store. The groceries can wait 🚪", "Not Applicable / I only do grocery delivery 📦"]
+ },
+ {
+   q: "When you overthink (which is always), what is it about?",
+   opts: ["A dumb thing I said to a cashier in 2017 🤦‍♂️", "How a text message I sent was interpreted 📱", "Simulating 45 fake scenarios that will never happen 🎭", "Whether my friends actually tolerate me or not 🥺", "Not Applicable / My mind is a peaceful, empty void 🪹"]
+ },
+ {
+   q: "Your ideal travel style?",
+   opts: ["Solo exploring a quiet, rainy city 🌧️", "Staying in a cozy Airbnb and barely leaving 🏡", "Going somewhere with zero tourist crowds 🏔️", "Letting someone else handle all the talking 🗺️", "Not Applicable / I don't leave my house 🛑"]
+ },
+ {
+   q: "How do you flirt or show interest in a crush?",
+   opts: ["I ignore them and hope they notice me 🤡", "I stare at them intensely from across the room 👀", "I overanalyze every punctuation mark in their texts 🧐", "I accidentally insult them trying to be witty 😭", "Not Applicable / I do not perceive or experience crushes 🤖"]
+ },
+ {
+   q: "What's your toxic trait?",
+   opts: ["Replying to a text in my head but never actually typing it 🧠", "Saying 'I'm down for whatever' when I am not down 🙃", "Ghosting everyone because I'm socially exhausted 👻", "Making up an elaborate lie to get out of plans 🤥", "Not Applicable / I am literally perfect ✨"]
+ },
+ {
+   q: "The ultimate green flag in a person?",
+   opts: ["They don't force me to make phone calls 📞", "They understand when I need to leave an event early 🚗", "They can match my weird, niche sense of humor 🃏", "They order the food for me at restaurants 🍔", "Not Applicable / I only look for red flags 🚩"]
+ }
 ];
 
 let index=0;
@@ -116,7 +251,7 @@ function showStart(){
   <div class="fade">
   <h2>VibeCheck 💫</h2>
   <p>Play & share with your person 😄</p>
-  <button onclick="start()">Start</button>
+  <button class="cta-btn" onclick="start()">Start Quiz</button>
   </div>
  `;
 }
@@ -155,9 +290,10 @@ function generateLink(){
 
  app.innerHTML=`
  <div class="fade">
-  <h3>Send this link 😎</h3>
-  <input value="${link}" readonly>
-  <button onclick="copy('${link}')">Copy</button>
+  <h2>Send this link 😎</h2>
+  <p>Let's see if they get you.</p>
+  <input value="${link}" readonly id="linkBox">
+  <button class="cta-btn" onclick="copy('${link}')">Copy Link</button>
  </div>
  `;
 }
@@ -176,8 +312,8 @@ function load(){
   app.innerHTML=`
   <div class="fade">
    <div class="big">${data.percent}%</div>
-   <h3>${data.msg}</h3>
-   <button onclick="showStart()">Play</button>
+   <h2>${data.msg}</h2>
+   <button class="cta-btn" onclick="showStart()">Create Your Own</button>
   </div>
   `;
   return;
@@ -238,11 +374,11 @@ function showResult(their){
  app.innerHTML=`
  <div class="fade">
   <div class="big">${percent}%</div>
-  <h3>${msg}</h3>
-  <p>Share result 😄</p>
+  <h2>${msg}</h2>
+  <p>Share your result 😄</p>
   <input value="${link}" readonly>
-  <button onclick="copy('${link}')">Copy Result</button>
-  <button onclick="showStart()">Play Again</button>
+  <button class="cta-btn" style="margin-bottom:10px;" onclick="copy('${link}')">Copy Result Link</button>
+  <button class="cta-btn" style="background:#374151; color:white;" onclick="showStart()">Try Again</button>
  </div>
  `;
 }
