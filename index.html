@@ -135,14 +135,41 @@ function fallbackCopy(text){
 
 function loadCompare(){
  let params=new URLSearchParams(window.location.search);
- let data = params.get("data");
- if(data) data = decodeURIComponent(data);
+
+ // PRIORITY: result link
+ let result=params.get("result");
+ if(result){
+   try{
+     const decoded=decodeData(decodeURIComponent(result));
+     app.innerHTML=`
+       <div class="big">${decoded.percent}%</div>
+       <h3>Compatibility Result 😄</h3>
+       <button onclick="renderStart()">Play Yourself</button>
+     `;
+     return;
+   }catch(e){
+     // fallback to normal flow
+   }
+ }
+
+ let data=params.get("data");
  if(!data) return renderStart();
+
+ try{
+   data = decodeURIComponent(data);
+ }catch(e){}
 
  let theirAnswers;
  try{
    theirAnswers=decodeData(data);
  }catch(e){
+   alert("Invalid or corrupted link");
+   return renderStart();
+ }
+
+ index=0; myAnswers=[];
+ showCompareQ(theirAnswers);
+}catch(e){
    alert("Invalid or corrupted link");
    return renderStart();
  }
