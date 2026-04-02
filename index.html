@@ -1,554 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>âœ¨ VibeCheck â€” Compatibility Game</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Compatibility Game Link</title>
 <style>
-  /* â”€â”€â”€ RESET & TOKENS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg:        #0b0d14;
-    --surface:   #13161f;
-    --card:      #1a1e2c;
-    --border:    rgba(255,255,255,0.07);
-    --accent1:   #ff6b6b;
-    --accent2:   #ffd93d;
-    --accent3:   #6bcbff;
-    --accent4:   #a78bfa;
-    --text:      #eaeef8;
-    --muted:     #6b7396;
-    --radius:    18px;
-    --font-head: 'Syne', sans-serif;
-    --font-body: 'DM Sans', sans-serif;
-  }
-
-  html, body {
-    height: 100%;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--font-body);
-    font-size: 16px;
-    line-height: 1.55;
-    overflow-x: hidden;
-  }
-
-  /* â”€â”€â”€ NOISE TEXTURE OVERLAY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 0;
-  }
-
-  /* â”€â”€â”€ GLOW ORBS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .orb {
-    position: fixed; border-radius: 50%;
-    filter: blur(90px); opacity: 0.18;
-    pointer-events: none; z-index: 0;
-    animation: drift 12s ease-in-out infinite alternate;
-  }
-  .orb1 { width:380px; height:380px; background:var(--accent1); top:-120px; left:-100px; animation-delay:0s; }
-  .orb2 { width:300px; height:300px; background:var(--accent4); bottom:-80px; right:-60px; animation-delay:-4s; }
-  .orb3 { width:200px; height:200px; background:var(--accent3); top:50%; left:60%; animation-delay:-8s; }
-  @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(30px,20px) scale(1.08); } }
-
-  /* â”€â”€â”€ LAYOUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  #app {
-    position: relative; z-index: 1;
-    min-height: 100dvh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 20px 16px;
-  }
-
-  .screen {
-    display: none;
-    width: 100%; max-width: 480px;
-    animation: fadeUp 0.45s cubic-bezier(.22,.68,0,1.2) both;
-  }
-  .screen.active { display: block; }
-
-  @keyframes fadeUp {
-    from { opacity:0; transform: translateY(28px) scale(0.97); }
-    to   { opacity:1; transform: translateY(0) scale(1); }
-  }
-
-  /* â”€â”€â”€ CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 32px 24px;
-    box-shadow: 0 24px 60px rgba(0,0,0,0.45);
-    backdrop-filter: blur(12px);
-  }
-
-  /* â”€â”€â”€ LOGO / HEADER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .logo {
-    font-family: var(--font-head);
-    font-weight: 800;
-    font-size: 2rem;
-    letter-spacing: -1px;
-    background: linear-gradient(135deg, var(--accent1), var(--accent2), var(--accent4));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 4px;
-  }
-  .tagline {
-    font-size: 0.85rem;
-    color: var(--muted);
-    margin-bottom: 28px;
-    font-style: italic;
-  }
-
-  /* â”€â”€â”€ TYPOGRAPHY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  h2 {
-    font-family: var(--font-head);
-    font-size: 1.35rem;
-    font-weight: 700;
-    margin-bottom: 8px;
-  }
-  p { color: var(--muted); font-size: 0.92rem; margin-bottom: 20px; }
-
-  /* â”€â”€â”€ INPUT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .input-wrap { margin-bottom: 20px; }
-  .input-wrap label {
-    display: block;
-    font-size: 0.8rem;
-    font-weight: 500;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-  input[type="text"] {
-    width: 100%;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 12px;
-    padding: 14px 16px;
-    font-size: 1rem;
-    font-family: var(--font-body);
-    color: var(--text);
-    outline: none;
-    transition: border-color .2s;
-  }
-  input[type="text"]:focus { border-color: var(--accent4); }
-  input[type="text"]::placeholder { color: var(--muted); }
-
-  /* â”€â”€â”€ BUTTONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .btn {
-    display: block; width: 100%;
-    padding: 15px 20px;
-    border: none; border-radius: 14px;
-    font-family: var(--font-head);
-    font-size: 1rem; font-weight: 700;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    transition: transform .15s, box-shadow .15s, filter .15s;
-    text-align: center;
-  }
-  .btn:active { transform: scale(0.96); }
-
-  .btn-primary {
-    background: linear-gradient(135deg, var(--accent1), #ff4f92);
-    color: #fff;
-    box-shadow: 0 8px 30px rgba(255,107,107,0.35);
-  }
-  .btn-primary:hover { filter: brightness(1.08); box-shadow: 0 12px 36px rgba(255,107,107,0.5); }
-
-  .btn-secondary {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    color: var(--text);
-    margin-top: 12px;
-  }
-  .btn-secondary:hover { border-color: var(--accent4); }
-
-  .btn-accent {
-    background: linear-gradient(135deg, var(--accent4), var(--accent3));
-    color: #fff;
-    box-shadow: 0 8px 30px rgba(167,139,250,0.3);
-  }
-  .btn-accent:hover { filter: brightness(1.08); }
-
-  .btn-gold {
-    background: linear-gradient(135deg, var(--accent2), #ff9f43);
-    color: #1a1208;
-    box-shadow: 0 8px 30px rgba(255,217,61,0.3);
-  }
-
-  /* â”€â”€â”€ PROGRESS BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .progress-wrap {
-    display: flex; align-items: center; gap: 12px;
-    margin-bottom: 22px;
-  }
-  .progress-bar-bg {
-    flex: 1; height: 6px;
-    background: var(--surface);
-    border-radius: 99px;
-    overflow: hidden;
-  }
-  .progress-bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent1), var(--accent4));
-    border-radius: 99px;
-    transition: width .4s cubic-bezier(.22,.68,0,1.2);
-  }
-  .progress-label {
-    font-size: 0.78rem;
-    color: var(--muted);
-    white-space: nowrap;
-    font-weight: 500;
-  }
-
-  /* â”€â”€â”€ QUESTION CARD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .question-text {
-    font-family: var(--font-head);
-    font-size: 1.2rem;
-    font-weight: 700;
-    line-height: 1.4;
-    margin-bottom: 22px;
-    color: var(--text);
-  }
-
-  /* â”€â”€â”€ OPTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .options { display: flex; flex-direction: column; gap: 10px; }
-
-  .option-btn {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-family: var(--font-body);
-    font-size: 0.95rem;
-    color: var(--text);
-    cursor: pointer;
-    text-align: left;
-    transition: border-color .2s, background .2s, transform .15s;
-    width: 100%;
-  }
-  .option-btn:hover {
-    border-color: var(--accent4);
-    background: rgba(167,139,250,0.08);
-  }
-  .option-btn:active { transform: scale(0.97); }
-  .option-btn.selected {
-    border-color: var(--accent1);
-    background: rgba(255,107,107,0.12);
-  }
-  .option-emoji { font-size: 1.3rem; flex-shrink: 0; }
-  .option-letter {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 26px; height: 26px;
-    background: var(--border);
-    border-radius: 8px;
-    font-size: 0.75rem; font-weight: 700;
-    color: var(--muted);
-    flex-shrink: 0;
-    font-family: var(--font-head);
-  }
-  .option-btn.selected .option-letter {
-    background: var(--accent1);
-    color: #fff;
-  }
-
-  /* â”€â”€â”€ RESULT SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .score-ring-wrap {
-    display: flex; justify-content: center;
-    margin: 8px 0 24px;
-  }
-  .score-ring {
-    position: relative;
-    width: 150px; height: 150px;
-  }
-  .score-ring svg { transform: rotate(-90deg); }
-  .score-ring-bg { fill: none; stroke: var(--surface); stroke-width: 10; }
-  .score-ring-fill {
-    fill: none; stroke-width: 10;
-    stroke-linecap: round;
-    stroke: url(#scoreGrad);
-    stroke-dasharray: 408;
-    stroke-dashoffset: 408;
-    transition: stroke-dashoffset 1.2s cubic-bezier(.22,.68,0,1.2);
-  }
-  .score-number {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-  }
-  .score-pct {
-    font-family: var(--font-head);
-    font-size: 2.2rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--accent1), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    line-height: 1;
-  }
-  .score-pct-sign {
-    font-family: var(--font-head);
-    font-size: 1rem; font-weight: 700;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
-  .match-badge {
-    display: inline-block;
-    padding: 8px 20px;
-    border-radius: 99px;
-    font-family: var(--font-head);
-    font-size: 1rem; font-weight: 700;
-    margin-bottom: 12px;
-    letter-spacing: 0.02em;
-  }
-  .match-badge.fire   { background: rgba(255,107,107,0.18); color: var(--accent1); border: 1px solid rgba(255,107,107,0.3); }
-  .match-badge.good   { background: rgba(107,203,255,0.14); color: var(--accent3); border: 1px solid rgba(107,203,255,0.3); }
-  .match-badge.hm     { background: rgba(167,139,250,0.14); color: var(--accent4); border: 1px solid rgba(167,139,250,0.3); }
-  .match-badge.opposites { background: rgba(255,217,61,0.14); color: var(--accent2); border: 1px solid rgba(255,217,61,0.3); }
-
-  .names-row {
-    display: flex; align-items: center; justify-content: center; gap: 12px;
-    margin-bottom: 20px;
-    font-family: var(--font-head);
-    font-size: 1.05rem; font-weight: 700;
-  }
-  .names-heart { color: var(--accent1); font-size: 1.3rem; }
-
-  .result-msg {
-    text-align: center;
-    font-size: 0.95rem;
-    color: var(--muted);
-    margin-bottom: 24px;
-    font-style: italic;
-  }
-
-  /* â”€â”€â”€ COPY LINK BOX â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .link-box {
-    background: var(--surface);
-    border: 1.5px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 0.75rem;
-    color: var(--muted);
-    word-break: break-all;
-    margin-bottom: 12px;
-    font-family: monospace;
-    max-height: 80px;
-    overflow: hidden;
-    position: relative;
-  }
-  .link-box::after {
-    content: '';
-    position: absolute; bottom: 0; left: 0; right: 0; height: 30px;
-    background: linear-gradient(transparent, var(--surface));
-  }
-
-  /* â”€â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  #toast {
-    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: #20253a;
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 10px 22px;
-    font-size: 0.88rem;
-    color: var(--text);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-    transition: transform .3s cubic-bezier(.22,.68,0,1.2), opacity .3s;
-    opacity: 0; z-index: 100;
-    white-space: nowrap;
-  }
-  #toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  /* â”€â”€â”€ DIVIDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .divider {
-    display: flex; align-items: center; gap: 10px;
-    margin: 18px 0;
-    color: var(--muted); font-size: 0.78rem;
-  }
-  .divider::before, .divider::after {
-    content: ''; flex: 1;
-    height: 1px; background: var(--border);
-  }
-
-  /* â”€â”€â”€ WAITING SCREEN â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .waiting-icon {
-    font-size: 3.5rem;
-    text-align: center;
-    margin-bottom: 12px;
-    animation: pulse 2s ease-in-out infinite;
-  }
-  @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-
-  /* â”€â”€â”€ INTRO FEATURES LIST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .features {
-    display: flex; flex-direction: column; gap: 10px;
-    margin-bottom: 28px;
-  }
-  .feat {
-    display: flex; align-items: center; gap: 10px;
-    font-size: 0.88rem; color: var(--muted);
-  }
-  .feat-icon { font-size: 1.1rem; }
-
-  /* â”€â”€â”€ SCROLLABLE AREA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .screen { max-height: 100dvh; overflow-y: auto; }
-
-  /* â”€â”€â”€ CONFETTI CANVAS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  #confetti-canvas {
-    position: fixed; inset: 0;
-    pointer-events: none; z-index: 50;
-  }
-
-  /* â”€â”€â”€ UTILITY â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-  .mt8  { margin-top: 8px; }
-  .mt16 { margin-top: 16px; }
-  .text-center { text-align: center; }
-  .user1-tag {
-    display: inline-block;
-    font-size: 0.72rem; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    background: rgba(255,107,107,0.15);
-    color: var(--accent1);
-    border-radius: 6px; padding: 2px 8px;
-    margin-bottom: 16px;
-  }
-  .user2-tag {
-    display: inline-block;
-    font-size: 0.72rem; font-weight: 600;
-    text-transform: uppercase; letter-spacing: 0.08em;
-    background: rgba(107,203,255,0.15);
-    color: var(--accent3);
-    border-radius: 6px; padding: 2px 8px;
-    margin-bottom: 16px;
-  }
+body{margin:0;font-family:Arial;background:linear-gradient(135deg,#0f172a,#020617);color:#fff;display:flex;justify-content:center;align-items:center;height:100vh}
+.card{background:#111827;padding:20px;border-radius:20px;width:360px;text-align:center;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+button{padding:12px;border:none;border-radius:10px;margin:6px;cursor:pointer;font-size:16px}
+input{width:90%;padding:10px;margin:6px;border-radius:10px;border:none}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.big{font-size:26px;font-weight:bold}
 </style>
 </head>
 <body>
 
-<!-- Atmospheric orbs -->
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
+<div class="card">
+  <div id="app"></div>
+</div>
 
-<!-- Confetti canvas -->
-<canvas id="confetti-canvas"></canvas>
+<script>
+const questions=[
+ {q:"Your ideal date?",opts:["🍕 Netflix","✈️ Trip","🍷 Fancy dinner","🎮 Gaming","🌄 Long drive"]},
+ {q:"Biggest red flag?",opts:["Lies 😶","Late reply ⏳","Too many ex 😅","No ambition 🚫","No respect 😤"]},
+ {q:"Weekend vibe?",opts:["Sleep 😴","Party 🎉","Travel ✈️","Family 🏡","Gym 💪"]},
+ {q:"Food mood?",opts:["Healthy 🥗","Street 🍔","Home 🏡","Anything 😄","Dessert 🍰"]},
+ {q:"Love language?",opts:["Talk 💬","Care ❤️","Gifts 🎁","Time ⏰","Physical touch 🤝"]},
+ {q:"Fight style?",opts:["Silent 🤐","Talk it out 💬","Ignore 😅","Win argument 😎","Apologize fast 🙏"]},
+ {q:"Morning routine?",opts:["Workout 💪","Sleep more 😴","Phone scroll 📱","Meditation 🧘","Rush to work 🏃"]},
+ {q:"Travel style?",opts:["Luxury 🏨","Budget 💸","Backpacking 🎒","Road trips 🚗","Stay home 😄"]},
+ {q:"Spending habit?",opts:["Save all 💰","Spend freely 💸","Balanced ⚖️","Invest 📈","Impulse buy 😅"]},
+ {q:"Social life?",opts:["Few close friends 🤍","Big group 🎉","Family first 🏡","Online friends 💻","Solo 🧍"]},
+ {q:"Movie choice?",opts:["Romance ❤️","Action 🔥","Comedy 😂","Thriller 😱","Documentary 🎥"]},
+ {q:"Communication style?",opts:["Direct 💬","Emotional ❤️","Logical 🧠","Avoid conflict 😅","Sarcastic 😏"]},
+ {q:"Fitness level?",opts:["Daily workout 💪","Sometimes 😄","Rarely 😅","Sports 🏏","No interest 😴"]},
+ {q:"Future goal?",opts:["Career growth 💼","Family 🏡","Travel world ✈️","Wealth 💰","Peaceful life 🌿"]},
+ {q:"Handling stress?",opts:["Talk it out 💬","Sleep 😴","Eat 🍕","Workout 💪","Ignore 😅"]}
+];
 
-<!-- Toast notification -->
-<div id="toast">âœ… Copied!</div>
+let myAnswers=[];
+let index=0;
 
-<div id="app">
+const app=document.getElementById("app");
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       SCREEN 1 â€” Intro / Start
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="screen active" id="screen-intro">
-    <div class="card">
-      <div class="logo">VibeCheck âœ¨</div>
-      <div class="tagline">The 2-minute compatibility game</div>
+// FIX: Robust UTF-8 Base64 using TextEncoder/TextDecoder
+function encodeData(data){
+ const json = JSON.stringify(data);
+ const bytes = new TextEncoder().encode(json);
+ let binary = '';
+ bytes.forEach(b => binary += String.fromCharCode(b));
+ return btoa(binary);
+}
 
-      <div class="features">
-        <div class="feat"><span class="feat-icon">ðŸ’¬</span> 15 spicy personality questions</div>
-        <div class="feat"><span class="feat-icon">ðŸ”—</span> Share a link â€” your friend answers</div>
-        <div class="feat"><span class="feat-icon">ðŸ”¥</span> Get your compatibility score</div>
-      </div>
+function decodeData(data){
+ const binary = atob(data);
+ const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
+ const json = new TextDecoder().decode(bytes);
+ return JSON.parse(json);
+}
 
-      <div class="input-wrap">
-        <label>Your name</label>
-        <input type="text" id="intro-name" placeholder="e.g. Alex" maxlength="30" autocomplete="off">
-      </div>
+function renderStart(){
+ app.innerHTML=`
+  <h2>Compatibility Game 😄</h2>
+  <p>Play first → then share link</p>
+  <button onclick="startPlay()">Start</button>
+ `;
+}
 
-      <button class="btn btn-primary" onclick="startGame()">Let's Go ðŸš€</button>
-    </div>
+function startPlay(){
+ index=0; myAnswers=[];
+ showQ();
+}
+
+function showQ(){
+ if(index>=questions.length){
+   generateLink();
+   return;
+ }
+ let q=questions[index];
+ app.innerHTML=`
+  <h3>${q.q}</h3>
+  <div class="opts">
+   ${q.opts.map((o,i)=>`<button onclick="choose(${i})">${o}</button>`).join("")}
   </div>
+ `;
+}
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       SCREEN 2 â€” Questions
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="screen" id="screen-questions">
-    <div class="card">
-      <div id="player-tag"></div>
+function choose(i){
+ if(index>=questions.length) return;
+ myAnswers.push(questions[index].opts[i]);
+ index++;
+ showQ();
+}
 
-      <!-- Progress -->
-      <div class="progress-wrap">
-        <div class="progress-bar-bg">
-          <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
-        </div>
-        <div class="progress-label" id="progress-label">1 / 15</div>
-      </div>
+function generateLink(){
+ let data=encodeData(myAnswers);
+ let link=location.origin+location.pathname+"?data="+data;
 
-      <!-- Question -->
-      <div class="question-text" id="question-text"></div>
+ app.innerHTML=`
+  <h3>Share this link 😎</h3>
+  <input value="${link}" readonly />
+  <button onclick="copyLink()">Copy</button>
+ `;
+}
 
-      <!-- Options -->
-      <div class="options" id="options-container"></div>
-    </div>
+function copyLink(){
+  const input = document.querySelector("input");
+  const text = input.value;
+
+  // Try modern clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text)
+      .then(()=> alert("Link copied! Send on WhatsApp 👍"))
+      .catch(()=> fallbackCopy(text));
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const temp = document.createElement("textarea");
+  temp.value = text;
+  document.body.appendChild(temp);
+  temp.select();
+  temp.setSelectionRange(0, 99999);
+  try {
+    document.execCommand("copy");
+    alert("Link copied! Send on WhatsApp 👍");
+  } catch (err) {
+    alert("Copy failed. Please copy manually.");
+  }
+  document.body.removeChild(temp);
+}
+
+function loadCompare(){
+ let params=new URLSearchParams(window.location.search);
+ let data=params.get("data");
+ if(!data) return renderStart();
+
+ let theirAnswers;
+ try{
+   theirAnswers=decodeData(data);
+ }catch(e){
+   alert("Invalid or corrupted link");
+   return renderStart();
+ }
+
+ index=0; myAnswers=[];
+ showCompareQ(theirAnswers);
+}
+
+function showCompareQ(their){
+ if(index>=questions.length){
+   showResult(their);
+   return;
+ }
+ let q=questions[index];
+ app.innerHTML=`
+  <h3>${q.q}</h3>
+  <p>(Answer honestly 😄)</p>
+  <div class="opts">
+   ${q.opts.map((o,i)=>`<button onclick="compareChoose(${i})">${o}</button>`).join("")}
   </div>
+ `;
+ window.their=their;
+}
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       SCREEN 3 â€” Waiting (after User1 finishes)
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="screen" id="screen-waiting">
-    <div class="card text-center">
-      <div class="waiting-icon">ðŸ”—</div>
-      <h2>Share your link!</h2>
-      <p>Your friend opens this link and answers the same questions.<br>Then you'll see your score together.</p>
+function compareChoose(i){
+ if(index>=questions.length) return;
+ myAnswers.push(questions[index].opts[i]);
+ index++;
+ showCompareQ(window.their);
+}
 
-      <div class="link-box" id="share-link-box"></div>
+function showResult(their){
+ let match=0;
+ for(let i=0;i<their.length;i++){
+  if(their[i]===myAnswers[i]) match++;
+ }
+ let percent=Math.round((match/their.length)*100);
 
-      <button class="btn btn-accent" onclick="copyShareLink()">ðŸ“‹ Copy Link</button>
-      <button class="btn btn-secondary" onclick="shareViaWhatsApp()">ðŸ’¬ Share on WhatsApp</button>
+ let msg= percent>80?"Perfect Match 🔥":percent>60?"Good Match 🙂":percent>40?"Hmm Interesting 🤔":"Opposites 👀";
 
-      <div class="divider">waiting...</div>
+ app.innerHTML=`
+  <div class="big">${percent}%</div>
+  <h3>${msg}</h3>
+  <button onclick="renderStart()">Play Again</button>
+ `;
+}
 
-      <p style="font-size:0.82rem;">Once your friend plays, they'll send you a result link!</p>
-    </div>
-  </div>
+loadCompare();
+</script>
 
-  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-       SCREEN 4 â€” Result
-  â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
-  <div class="screen" id="screen-result">
-    <div class="card text-center">
-
-      <!-- Score ring -->
-      <div class="score-ring-wrap">
-        <div class="score-ring">
-          <svg width="150" height="150" viewBox="0 0 150 150">
-            <defs>
-              <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stop-color="#ff6b6b"/>
-                <stop offset="100%" stop-color="#a78bfa"/>
-              </linearGradient>
-            </defs>
-            <circle class="score-ring-bg" cx="75" cy="75" r="65"/>
-            <circle class="score-ring-fill" id="score-ring-fill" cx="75" cy="75" r="65"/>
-          </svg>
-          <div class="score-number">
-            <div class="score-pct" id="score-pct">0</div>
-            <div class="score-pct-sign">%</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Names row -->
-      <div class="names-row">
-        <span id="result-name1">â€”</span>
-        <span class="names-heart">ðŸ’–</span>
-        <span id="result-name2">â€”</span>
-      </div>
-
-      <!-- Badge & message -->
-      <div id="match-badge-wrap"></div>
-      <div class="result-msg" id="result-msg"></div>
-
-      <!-- Share result link -->
-      <div id="result-link-section" style="display:none">
-        <p style="font-size:0.82rem; margin-bottom:8px;">Send this link to <span id="result-back-name" style="color:var(--accent2);font-weight:600"></span> so they see the result too:</p>
-        <d
+</body>
+</html>
